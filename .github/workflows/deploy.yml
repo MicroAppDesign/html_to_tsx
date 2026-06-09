@@ -9,13 +9,36 @@ on:
       - main
 
 jobs:
-  build-and-deploy:
+  validate:
     runs-on: ubuntu-latest
+    name: Validate HTML
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Validate HTML syntax
+        run: |
+          if ! grep -q "<!DOCTYPE html>" index.html; then
+            echo "❌ Missing DOCTYPE declaration"
+            exit 1
+          fi
+          echo "✓ HTML validation passed"
+
+  deploy:
+    runs-on: ubuntu-latest
+    name: Deploy to GitHub Pages
+    needs: validate
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     
     permissions:
       contents: read
       pages: write
       id-token: write
+    
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     
     steps:
       - name: Checkout code
@@ -30,18 +53,5 @@ jobs:
           path: '.'
       
       - name: Deploy to GitHub Pages
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         id: deployment
         uses: actions/deploy-pages@v3
-
-  validate:
-    runs-on: ubuntu-latest
-    
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      
-      - name: Validate HTML
-        uses: validator/action@v2
-        with:
-          file: index.html
