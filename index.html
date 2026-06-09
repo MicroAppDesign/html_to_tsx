@@ -168,6 +168,20 @@
             </div>
         </div>
 
+        <!-- กล่องคำแนะนำเกี่ยวกับข้อจำกัดและวิธีการป้อนข้อมูลที่ดีที่สุด -->
+        <div class="bg-amber-500/5 border border-amber-500/20 text-amber-200/90 rounded-2xl p-4 flex flex-col md:flex-row items-start gap-3.5">
+            <div class="p-1.5 bg-amber-500/10 text-amber-400 rounded-lg shrink-0 mt-0.5">
+                <i data-lucide="alert-triangle" class="w-5 h-5"></i>
+            </div>
+            <div class="text-xs sm:text-sm">
+                <span class="font-bold text-amber-300 block mb-1">💡 คำแนะนำสำคัญสำหรับการป้อนข้อมูล (HTML/CSS Scope Limit):</span>
+                <p class="leading-relaxed text-slate-300">
+                    เพื่อผลลัพธ์ของไฟล์ React TSX ที่นำไปใช้งานได้จริงทันที กรุณาป้อนเฉพาะ <strong class="text-amber-400 font-semibold">"ส่วนประกอบ HTML ตระกูลโครงสร้างส่วนติดต่อผู้ใช้ (เช่น div, form, section, buttons)"</strong> และแท็ก <code class="text-amber-300 font-mono bg-amber-950/40 px-1 py-0.5 rounded">&lt;style&gt;</code> ที่เกี่ยวข้อง <br class="hidden sm:inline">
+                    <span class="text-red-400/90 font-medium">⚠️ หลีกเลี่ยง:</span> การใส่โครงสร้างหน้าเว็บเต็มฉบับ เช่น <code class="text-slate-400 font-mono bg-slate-900/50 px-1 rounded">&lt;!DOCTYPE html&gt;</code>, <code class="text-slate-400 font-mono bg-slate-900/50 px-1 rounded">&lt;html&gt;</code>, <code class="text-slate-400 font-mono bg-slate-900/50 px-1 rounded">&lt;head&gt;</code> หรือการเรียกสคริปต์ภายนอก (<code class="text-slate-400 font-mono bg-slate-900/50 px-1 rounded">&lt;script src="..."&gt;</code>) เนื่องจากแท็กเหล่านี้จะถูกจัดไว้ที่เลย์เอาต์หลักของเฟรมเวิร์ก ไม่สมควรมาอยู่ใน React Component ย่อย
+                </p>
+            </div>
+        </div>
+
         <!-- พื้นที่กล่องโค้ดคู่ขนาน -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-5 flex-1 min-h-[480px]">
             
@@ -567,6 +581,46 @@
             });
         }
 
+        // --- ระบบเตรียมกรองโค้ดเบื้องต้นเพื่อความมั่นใจสูงสุด (PRE-PROCESSOR SANITIZER) ---
+        function sanitizeInputHTML(rawHtml) {
+            let processed = rawHtml.trim();
+            if (!processed) return '';
+
+            // ถ้ามี <body> ให้หยิบส่วนข้างใน <body> หรือตัว <body> เองมาประมวลผล เพื่อแก้ปัญหานำเข้า Full HTML
+            if (/<body[^>]*>([\s\S]*?)<\/body>/gi.test(processed)) {
+                // ค้นหาและหยิบสไตล์ภายนอก/ใน head มาพ่วงเพิ่มด้วยเพื่อความสมบูรณ์
+                let extraStyles = '';
+                const styleMatches = processed.match(/<style[^>]*>[\s\S]*?<\/style>/gi) || [];
+                styleMatches.forEach(styleTag => {
+                    extraStyles += styleTag + '\n';
+                });
+
+                const bodyMatch = processed.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
+                if (bodyMatch && bodyMatch[1]) {
+                    processed = bodyMatch[1].trim() + '\n' + extraStyles;
+                    showToast('ระบบได้ตัดเนื้อหาที่ไม่ใช่องค์ประกอบ UI ภายนอกออกเรียบร้อย!', 'info');
+                }
+            } else {
+                // ถ้าไม่มี body แต่มีพวก tag <!doctype html>, <html>, <head> ปะปนอยู่ ให้ใช้ Regex กำจัดทิ้งอย่างปลอดภัย
+                processed = processed.replace(/<!DOCTYPE[^>]*>/gi, '');
+                processed = processed.replace(/<\/?html[^>]*>/gi, '');
+                processed = processed.replace(/<head[^>]*>([\s\S]*?)<\/head>/gi, (match, headInner) => {
+                    // เก็บเฉพาะสไตล์บล็อกภายใน head ไว้
+                    const inlineStyles = headInner.match(/<style[^>]*>[\s\S]*?<\/style>/gi) || [];
+                    return inlineStyles.join('\n');
+                });
+                processed = processed.replace(/<title[^>]*>[\s\S]*?<\/title>/gi, '');
+                processed = processed.replace(/<meta[^>]*>/gi, '');
+                processed = processed.replace(/<link[^>]*>/gi, '');
+                processed = processed.replace(/<script[^>]*>([\s\S]*?)<\/script>/gi, (match, scriptInner) => {
+                    // ตัดการนำเข้า CDN script ภายนอกออกทั้งหมด เพื่อให้เหลือแต่โครงสร้างหน้าตา
+                    if (match.includes('src=')) return '';
+                    return match;
+                });
+            }
+            return processed.trim();
+        }
+
         // --- เริ่มต้นตรรกะ LOCAL COMPILER (ไม่ใช่ AI) ---
         
         // ฟังก์ชันดึงและแปลง CSS Declarations ไปเป็น Tailwind CSS Utility Classes
@@ -809,7 +863,7 @@
             }
         }
 
-        // แกนรวบรวมการรันคำสั่ง Local Converter
+        // แกนรวบรวมการรันคำสั่ง Local Compiler
         function compileLocalTSX(htmlWithStyles, componentName) {
             const parser = new DOMParser();
             
@@ -856,13 +910,16 @@ export default function ${componentName}() {
 
         // จัดการเชื่อมต่อประมวลผลแปลงโค้ด (เลือกระหว่าง Local หรือ AI)
         async function handleConvert() {
-            const htmlValue = htmlInput.value.trim();
+            const rawHtmlValue = htmlInput.value.trim();
             const componentName = componentNameInput.value.trim() || 'MyComponent';
 
-            if (!htmlValue) {
+            if (!rawHtmlValue) {
                 showToast('กรุณากรอกโค้ด HTML ก่อนทำการแปลง', 'error');
                 return;
             }
+
+            // ทำการทำความสะอาดและตรวจสอบขอบเขตข้อมูลก่อนประมวลผล (Sanitization)
+            const htmlValue = sanitizeInputHTML(rawHtmlValue);
 
             // ปรับแต่งการแสดงผล UI ตอนเริ่มรันงาน
             loadingState.classList.remove('hidden');
@@ -920,7 +977,7 @@ export default function ${componentName}() {
                 กรุณาช่วยแปลงโค้ดนี้ให้กลายเป็นคอมโพเนนต์ React TypeScript (TSX) ที่สวยงามและมีโครงสร้างที่ดี
                 - ตั้งชื่อคอมโพเนนต์หลักว่า: "${componentName}"
                 - แปลงสไตล์ทั้งหมด (ทั้งจากแท็ก <style> และสไตล์ inline) ไปเป็น Tailwind CSS classes ที่เหมาะสมที่สุด
-                - ห้ามนำเข้าไฟล์ .css ภายนอกหรือเก็บ <style> เดิมไว้ในผลลัพธ์คอมโพเนนต์
+                - ห้ามนำเข้าไฟล์ .css ภายนอกหรือเก็บ <style> หรือ <meta> หรือ <script> หรือ <html> หรือ <head> หรือ Doctype ดั้งเดิมไว้ในผลลัพธ์คอมโพเนนต์โดยเด็ดขาด!
                 - ใช้ประเภท TypeScript (TypeScript types/interfaces) ที่ถูกต้อง หากจำเป็นต้องจัดการสเตตหรือ Events
                 - ตรวจสอบให้แน่ใจว่าแท็กที่เปิดทั้งหมดถูกปิดอย่างถูกต้องในรูปแบบ TSX (เช่น <img />)
                 - เปลี่ยนแอ็ตทริบิวต์ให้อยู่ในมาตรฐาน React (เช่น 'class' เป็น 'className', 'onclick' เป็น 'onClick', สไตล์แบบ inline เป็น React style object)
