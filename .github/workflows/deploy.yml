@@ -4,38 +4,15 @@ on:
   push:
     branches:
       - main
-  pull_request:
-    branches:
-      - main
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
 
 jobs:
-  validate:
+  build-and-deploy:
     runs-on: ubuntu-latest
-    name: Validate HTML
-    
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      
-      - name: Validate HTML syntax
-        run: |
-          if ! grep -q "<!DOCTYPE html>" index.html; then
-            echo "❌ Missing DOCTYPE declaration"
-            exit 1
-          fi
-          echo "✓ HTML validation passed"
-
-  deploy:
-    runs-on: ubuntu-latest
-    name: Deploy to GitHub Pages
-    needs: validate
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    
-    permissions:
-      contents: read
-      pages: write
-      id-token: write
-    
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -44,13 +21,21 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
       
+      - name: Validate HTML
+        run: |
+          if ! grep -q "<!DOCTYPE html>" index.html; then
+            echo "❌ Missing DOCTYPE declaration"
+            exit 1
+          fi
+          echo "✓ HTML validation passed"
+      
       - name: Setup Pages
         uses: actions/configure-pages@v4
       
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: '.'
+          path: ''
       
       - name: Deploy to GitHub Pages
         id: deployment
