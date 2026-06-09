@@ -27,11 +27,10 @@
     <!-- Google Fonts (Sarabun & JetBrains Mono) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=Sarabun:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght=0,100..800;1,100..800&family=Sarabun:ital,wght=0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800&display=swap" rel="stylesheet">
     <!-- Lucide Icons via CDN -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        /* CSS ปรับแต่งเพิ่มเติมสำหรับการเลื่อนและเอฟเฟกต์แอนิเมชัน */
         textarea::-webkit-scrollbar {
             width: 8px;
             height: 8px;
@@ -64,10 +63,10 @@
                     <h1 class="text-lg md:text-xl font-bold tracking-tight text-white flex items-center gap-2">
                         HTML to TSX + Tailwind CSS
                         <span class="text-[10px] bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 px-2.5 py-0.5 rounded-full font-semibold uppercase tracking-wider">
-                            Client-Side
+                            Dual-Engine
                         </span>
                     </h1>
-                    <p class="text-xs text-slate-400">แปลงโค้ด HTML/CSS เดิมเป็น React Component และ Tailwind ด้วยพลัง AI</p>
+                    <p class="text-xs text-slate-400">แปลงโค้ด HTML/CSS เดิมเป็น React Component และ Tailwind ด้วยเครื่องยนต์ด่วนหรือ AI</p>
                 </div>
             </div>
             
@@ -95,25 +94,43 @@
     <!-- พื้นที่แสดงแอปหลัก -->
     <main class="flex-1 max-w-7xl w-full mx-auto p-4 flex flex-col gap-5">
         
-        <!-- แถบควบคุมและกำหนดค่าสำหรับ AI (API Key / Component Name / Submit) -->
+        <!-- แถบควบคุมและสลับวิธีแปลง -->
         <div class="glow-effect bg-gradient-to-r from-slate-900 via-slate-900 to-indigo-950/20 border border-indigo-500/10 rounded-2xl p-4 md:p-5 flex flex-col xl:flex-row items-stretch xl:items-center justify-between gap-4">
             
-            <div class="flex gap-3.5">
-                <div class="p-2.5 bg-indigo-500/10 text-indigo-400 rounded-xl shrink-0 h-fit mt-0.5 border border-indigo-500/20">
-                    <i data-lucide="sparkles" class="w-5 h-5"></i>
+            <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                <div class="p-2.5 bg-indigo-500/10 text-indigo-400 rounded-xl shrink-0 border border-indigo-500/20">
+                    <i data-lucide="sliders" class="w-5 h-5"></i>
                 </div>
                 <div>
-                    <h3 class="font-semibold text-white text-sm sm:text-base">เริ่มงานเขียนโค้ดและย้ายคลาสอย่างอัจฉริยะ</h3>
-                    <p class="text-xs text-slate-400 mt-0.5 max-w-xl">
-                        เพียงใส่ Gemini API Key (ฟรี) ของคุณลงไป ระบบจะทำหน้าที่เปรียบเทียบสไตล์ CSS ดั้งเดิมให้เข้ากับ Tailwind utility ทันที
+                    <!-- สวิตช์สลับโหมดการทำงาน -->
+                    <div class="flex bg-slate-950 p-1 rounded-lg border border-slate-800 w-fit">
+                        <button 
+                            id="btn-mode-local" 
+                            onclick="switchEngineMode('local')"
+                            class="px-3 py-1.5 rounded-md text-xs font-bold transition flex items-center gap-1.5 bg-indigo-600 text-white shadow-sm"
+                        >
+                            <i data-lucide="zap" class="w-3.5 h-3.5"></i>
+                            เครื่องยนต์ท้องถิ่น (ไม่ต้องใช้เน็ต)
+                        </button>
+                        <button 
+                            id="btn-mode-ai" 
+                            onclick="switchEngineMode('ai')"
+                            class="px-3 py-1.5 rounded-md text-xs font-bold transition flex items-center gap-1.5 text-slate-400 hover:text-slate-200"
+                        >
+                            <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+                            โหมดใช้ AI (Gemini)
+                        </button>
+                    </div>
+                    <p id="mode-desc" class="text-xs text-slate-400 mt-1.5 max-w-lg">
+                        แปลงสไตล์ทั้งหมดเป็น Tailwind ในเสี้ยววินาทีบนหน้าเบราว์เซอร์ โดยอิงตามตรรกะ Compiler ภายในเครื่อง 100% ไม่พึ่งพา API
                     </p>
                 </div>
             </div>
 
             <!-- กล่องตั้งค่าและฟอร์มทำงาน -->
             <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-                <!-- Gemini API Key Input -->
-                <div class="flex items-center gap-2 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 w-full sm:w-64 focus-within:border-indigo-500/50 transition">
+                <!-- Gemini API Key Input (ซ่อนในโหมดโลคอล) -->
+                <div id="api-key-container" class="hidden items-center gap-2 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 w-full sm:w-64 focus-within:border-indigo-500/50 transition">
                     <i data-lucide="key" class="w-4 h-4 text-slate-500 shrink-0"></i>
                     <input 
                         id="api-key"
@@ -145,13 +162,13 @@
                     onclick="handleConvert()"
                     class="bg-indigo-600 hover:bg-indigo-500 active:scale-95 text-white font-semibold py-2.5 px-6 rounded-xl shadow-lg shadow-indigo-600/15 flex items-center justify-center gap-2 transition text-sm shrink-0 duration-200"
                 >
-                    <i data-lucide="sparkles" class="w-4 h-4"></i>
-                    <span>เริ่มแปลงโค้ด</span>
+                    <i data-lucide="zap" id="convert-btn-icon" class="w-4 h-4"></i>
+                    <span id="convert-btn-text">เริ่มแปลงทันที</span>
                 </button>
             </div>
         </div>
 
-        <!-- พื้นที่กล่องโค้ดคู่ขนาน (Code Panels) -->
+        <!-- พื้นที่กล่องโค้ดคู่ขนาน -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-5 flex-1 min-h-[480px]">
             
             <!-- ฝั่งซ้าย: HTML Input -->
@@ -211,8 +228,8 @@
                             <div class="absolute inset-0 rounded-full border-4 border-indigo-500 border-t-transparent animate-spin"></div>
                         </div>
                         <div>
-                            <h4 class="font-semibold text-white text-sm">AI กำลังทำงานอย่างแข็งขัน</h4>
-                            <p class="text-xs text-slate-400 mt-1 max-w-xs">แปลงสไตล์ CSS และแยกส่วนประกอบย่อยให้เหมาะกับมาตรฐาน JSX</p>
+                            <h4 id="loading-title" class="font-semibold text-white text-sm">เครื่องยนต์กำลังประมวลผล</h4>
+                            <p id="loading-desc" class="text-xs text-slate-400 mt-1 max-w-xs">แยกโครงสร้าง CSS ดั้งเดิม ย้ายคลาส และสร้างสถาปัตยกรรม JSX ด่วน</p>
                         </div>
                     </div>
 
@@ -229,7 +246,7 @@
                     <textarea
                         id="tsx-output"
                         readonly
-                        placeholder="ผลลัพธ์จากการแปลงด้วย AI จะแสดงที่นี่หลังจากประมวลผลเสร็จสิ้น..."
+                        placeholder="ผลลัพธ์จากการแปลงจะแสดงที่นี่หลังจากประมวลผลเสร็จสิ้น..."
                         class="w-full h-full p-4 bg-slate-900/40 text-indigo-200 font-mono text-sm focus:outline-none resize-none border-0 leading-relaxed"
                     ></textarea>
 
@@ -239,7 +256,7 @@
                             <i data-lucide="arrow-right-left" class="w-6 h-6"></i>
                         </div>
                         <h4 class="font-semibold text-slate-400 text-sm">ยังไม่มีผลลัพธ์</h4>
-                        <p class="text-xs text-slate-500 max-w-xs mt-1">ตั้งค่า API Key แล้วกดปุ่มแปลงด้านบนเพื่อรันคำสั่งทันที</p>
+                        <p class="text-xs text-slate-500 max-w-xs mt-1">กดปุ่มเริ่มแปลงเพื่อทดลองสร้างโครงสร้างคอมโพเนนต์ของคุณ</p>
                     </div>
                 </div>
 
@@ -251,39 +268,30 @@
 
         </div>
 
-        <!-- ส่วนวิธีขอรับคีย์ API ฟรี -->
+        <!-- ส่วนคู่มือการศึกษา -->
         <section class="bg-slate-900/40 border border-slate-900 rounded-2xl p-5 mt-2">
             <h3 class="text-sm md:text-base font-semibold text-white mb-4 flex items-center gap-2">
-                <i data-lucide="help-circle" class="w-5 h-5 text-indigo-400"></i>
-                คุณจะเริ่มต้นสร้าง Gemini API Key ฟรีได้อย่างไร?
+                <i data-lucide="info" class="w-5 h-5 text-indigo-400"></i>
+                ความแตกต่างระหว่าง 2 เครื่องยนต์ระบบ
             </h3>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-5 text-xs md:text-sm text-slate-300">
-                <div class="bg-slate-950/40 border border-slate-900 p-4 rounded-xl flex flex-col justify-between">
-                    <div>
-                        <span class="text-[10px] text-indigo-400 font-bold uppercase tracking-wide">ขั้นตอนแรก</span>
-                        <h4 class="font-semibold text-white mt-1 mb-1.5">เข้าสู่ Google AI Studio</h4>
-                        <p class="text-slate-400 text-xs leading-relaxed">
-                            เปิดลิงก์ไปยังแพลตฟอร์มผู้พัฒนาเพื่อสิทธิ์เข้าใช้งานโมเดล โดยล็อกอินด้วยบัญชี Google ของคุณ
-                        </p>
-                    </div>
-                    <a href="https://aistudio.google.com/" target="_blank" class="text-indigo-400 hover:text-indigo-300 font-semibold text-xs mt-3 flex items-center gap-1">
-                        ไปที่ Google AI Studio <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
-                    </a>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5 text-xs md:text-sm text-slate-300">
+                <div class="bg-slate-950/40 border border-slate-900 p-4 rounded-xl">
+                    <h4 class="font-semibold text-indigo-400 flex items-center gap-1.5 mb-1.5">
+                        <i data-lucide="zap" class="w-4 h-4"></i>
+                        เครื่องยนต์ท้องถิ่น (Local Compiler)
+                    </h4>
+                    <p class="text-slate-400 text-xs leading-relaxed">
+                        ทำงานออฟไลน์ 100% ประมวลผลบนเบราว์เซอร์ของคุณภายในเสี้ยววินาที ระบบจะไล่สแกน Class และจัดทำ CSS map ตรวจจับหน่วยสเปซและสีไปประกอบเป็น Arbitrary Tailwind classes (เช่น <code class="text-indigo-300">p-[24px]</code>) เหมาะสำหรับงานขนาดกลางและรวดเร็ว
+                    </p>
                 </div>
                 
                 <div class="bg-slate-950/40 border border-slate-900 p-4 rounded-xl">
-                    <span class="text-[10px] text-sky-400 font-bold uppercase tracking-wide">ขั้นตอนสอง</span>
-                    <h4 class="font-semibold text-white mt-1 mb-1.5">สร้างคีย์พัฒนาการ (Create API Key)</h4>
+                    <h4 class="font-semibold text-emerald-400 flex items-center gap-1.5 mb-1.5">
+                        <i data-lucide="sparkles" class="w-4 h-4"></i>
+                        เครื่องยนต์ปัญญาประดิษฐ์ (AI Gemini Mode)
+                    </h4>
                     <p class="text-slate-400 text-xs leading-relaxed">
-                        กดสร้างปุ่มคีย์ใหม่ "Get API key" ในแดชบอร์ด และเลือกโปรเจกต์ของคุณเพื่ออนุมัติสิทธิ์สร้างโทเคนส่วนตัว
-                    </p>
-                </div>
-
-                <div class="bg-slate-950/40 border border-slate-900 p-4 rounded-xl">
-                    <span class="text-[10px] text-emerald-400 font-bold uppercase tracking-wide">ขั้นตอนสุดท้าย</span>
-                    <h4 class="font-semibold text-white mt-1 mb-1.5">คัดลอกมาใส่ในแอปนี้</h4>
-                    <p class="text-slate-400 text-xs leading-relaxed">
-                        นำกุญแจความลับ (AI Key) มาจัดวางในช่องด้านบนแล้วเริ่มการทำงานได้เลย โดยคีย์จะทำงานเฉพาะเครื่องของคุณเท่านั้น ไม่เก็บข้ามระบบ
+                        วิเคราะห์โครงสร้างภาษาและการจัดวางองค์ประกอบด้วย AI จาก Google (Gemini API) สามารถแปลง CSS ที่มีความซับซ้อน ปรับย่อขนาดเชิงกว้างเป็นสัดส่วน Tailwind แท้ (เช่น <code class="text-emerald-400">p-6</code> แทน <code class="text-emerald-300">p-[24px]</code>) รวมถึงวิเคราะห์การเขียน State หรือสร้าง Type กำหนดความต้องการที่ก้าวลึกขึ้น
                     </p>
                 </div>
             </div>
@@ -294,19 +302,19 @@
     <!-- ส่วนท้ายหน้าเว็บ (Footer) -->
     <footer class="border-t border-slate-900 bg-slate-950 py-4 px-4 text-center text-xs text-slate-500 mt-6">
         <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
-          <span>© 2026 HTML to TSX & Tailwind CSS Standalone Tool by Neon13. ขับเคลื่อนด้วยโมเดล Gemini และเว็บดั้งเดิม</span>
+          <span>© 2026 HTML to TSX & Tailwind CSS Standalone Tool by Neon13. ขับเคลื่อนด้วยโมเดล Gemini และเครื่องยนต์คอมไพเลอร์ภายในของ Neon13</span>
           <span class="text-slate-600 flex items-center gap-1">
               สร้างด้วย <i data-lucide="heart" class="w-3 h-3 text-red-500 fill-red-500"></i> โดย Neon13
           </span>
         </div>
     </footer>
 
-    <!-- แถบระบบแจ้งเตือน Toast แบบกำหนดเอง -->
+    <!-- แถบระบบแจ้งเตือน Toast -->
     <div id="toast-container" class="fixed bottom-4 right-4 z-50 flex flex-col gap-2 pointer-events-none"></div>
 
-    <!-- ตรรกะการประมวลผล JavaScript ดั้งเดิม (Client-side App Logic) -->
+    <!-- ตรรกะประมวลผล Javascript (Local Compiler + AI Integrations) -->
     <script>
-        // ข้อมูลตัวอย่างเริ่มต้นสำหรับการโหลดพรีเซ็ตด่วน
+        // พรีเซ็ต
         const PRESETS = {
             card: `<!-- ตัวอย่างที่ 1: การ์ดโปรไฟล์พร้อมสไตล์แบบดั้งเดิม -->
 <div class="profile-card">
@@ -416,43 +424,75 @@
 </div>`
         };
 
-        // ตั้งค่าตัวแปรอ้างอิง DOM Elements
+        // สถานะแอป
+        let activeEngineMode = 'local'; // 'local' หรือ 'ai'
+
+        // ตัวแปรอ้างอิง DOM Elements
         const htmlInput = document.getElementById('html-input');
         const tsxOutput = document.getElementById('tsx-output');
         const componentNameInput = document.getElementById('component-name');
         const apiKeyInput = document.getElementById('api-key');
+        const apiKeyContainer = document.getElementById('api-key-container');
         const btnConvert = document.getElementById('btn-convert');
+        const convertBtnIcon = document.getElementById('convert-btn-icon');
+        const convertBtnText = document.getElementById('convert-btn-text');
         const btnCopy = document.getElementById('btn-copy');
         const loadingState = document.getElementById('loading-state');
+        const loadingTitle = document.getElementById('loading-title');
+        const loadingDesc = document.getElementById('loading-desc');
         const emptyState = document.getElementById('empty-state');
         const errorBox = document.getElementById('error-box');
         const errorMessage = document.getElementById('error-message');
         const inputCharCount = document.getElementById('input-char-count');
         const outputCharCount = document.getElementById('output-char-count');
+        const modeDesc = document.getElementById('mode-desc');
 
-        // ตรวจสอบการพิมพ์เพื่อนับอักษร Realtime
+        // ตรวจสอบการพิมพ์เพื่อแสดง Realtime Character Count
         htmlInput.addEventListener('input', () => {
             inputCharCount.innerText = `ความยาว: ${htmlInput.value.length} ตัวอักษร`;
         });
 
-        // โหลดข้อมูลเข้าสู่หน้าจอเมื่อเปิดเบราว์เซอร์ครั้งแรก
+        // สลับโหมดของเครื่องยนต์
+        function switchEngineMode(mode) {
+            activeEngineMode = mode;
+            const btnLocal = document.getElementById('btn-mode-local');
+            const btnAi = document.getElementById('btn-mode-ai');
+
+            if (mode === 'local') {
+                btnLocal.className = "px-3 py-1.5 rounded-md text-xs font-bold transition flex items-center gap-1.5 bg-indigo-600 text-white shadow-sm";
+                btnAi.className = "px-3 py-1.5 rounded-md text-xs font-bold transition flex items-center gap-1.5 text-slate-400 hover:text-slate-200";
+                apiKeyContainer.classList.add('hidden');
+                convertBtnText.innerText = "เริ่มแปลงทันที";
+                convertBtnIcon.setAttribute('data-lucide', 'zap');
+                modeDesc.innerText = "แปลงสไตล์ทั้งหมดเป็น Tailwind ในเสี้ยววินาทีบนหน้าเบราว์เซอร์ โดยอิงตามตรรกะ Compiler ภายในเครื่อง 100% ไม่พึ่งพา API";
+            } else {
+                btnAi.className = "px-3 py-1.5 rounded-md text-xs font-bold transition flex items-center gap-1.5 bg-indigo-600 text-white shadow-sm";
+                btnLocal.className = "px-3 py-1.5 rounded-md text-xs font-bold transition flex items-center gap-1.5 text-slate-400 hover:text-slate-200";
+                apiKeyContainer.classList.remove('hidden');
+                convertBtnText.innerText = "เริ่มแปลงด้วย AI";
+                convertBtnIcon.setAttribute('data-lucide', 'sparkles');
+                modeDesc.innerText = "ใช้อัจฉริยะปัญญาประดิษฐ์ในการคิดวิเคราะห์ CSS ดั้งเดิมให้มีความฉลาด สมบูรณ์แบบเป็น Tailwind Utility ที่เหมาะสมที่สุด";
+            }
+            lucide.createIcons();
+            showToast(`เปลี่ยนเป็น โหมด${mode === 'local' ? 'เครื่องยนต์ท้องถิ่น' : 'ประมวลผลด้วย AI'}`, 'info');
+        }
+
         window.onload = function() {
             lucide.createIcons();
             loadPreset('card');
             
-            // ตรวจสอบคีย์ API ที่อาจจะถูกเก็บไว้ในเบราว์เซอร์เพื่อความสบายของผู้ใช้
+            // ตรวจสอบคีย์เดิมใน localStorage
             const savedKey = localStorage.getItem('gemini_api_key');
             if (savedKey) {
                 apiKeyInput.value = savedKey;
             }
         };
 
-        // แสดงแจ้งเตือนอย่างสวยงามในมุมล่างขวา
+        // แจ้งเตือน Toast
         function showToast(message, type = 'info') {
             const toastContainer = document.getElementById('toast-container');
             const toast = document.createElement('div');
             
-            // กำหนดสีตามประเภทแจ้งเตือน
             let bgClass = 'bg-slate-900 border-slate-800 text-slate-100';
             let icon = 'info';
             let iconColor = 'text-indigo-400';
@@ -476,38 +516,31 @@
             toastContainer.appendChild(toast);
             lucide.createIcons();
 
-            // ลบแอนิเมชันออกทีละตัว
             setTimeout(() => {
                 toast.classList.add('opacity-0', 'translate-y-1');
-                setTimeout(() => {
-                    toast.remove();
-                }, 300);
+                setTimeout(() => { toast.remove(); }, 300);
             }, 3500);
         }
 
-        // โหลดข้อมูลพรีเซ็ต
         function loadPreset(type) {
             if (PRESETS[type]) {
                 htmlInput.value = PRESETS[type];
                 componentNameInput.value = type === 'card' ? 'ProfileCard' : 'LoginForm';
                 inputCharCount.innerText = `ความยาว: ${htmlInput.value.length} ตัวอักษร`;
-                showToast(`โหลดตัวอย่างเรียบร้อยแล้ว`, 'info');
+                showToast(`โหลดตัวอย่างพรีเซ็ตสำเร็จ`, 'info');
             }
         }
 
-        // จัดการล้างข้อมูลหน้าจอ
         function clearInput() {
             htmlInput.value = '';
             inputCharCount.innerText = `ความยาว: 0 ตัวอักษร`;
             showToast('ล้างกล่องข้อมูลเรียบร้อย', 'info');
         }
 
-        // ป้องกันสัญลักษณ์ที่ส่งผลเสียต่อการตั้งชื่อ Component
         function cleanComponentName(input) {
             input.value = input.value.replace(/[^a-zA-Z0-9]/g, '');
         }
 
-        // สลับเปิด-ปิด ตาดู API Key
         function toggleApiKeyVisibility() {
             const icon = document.getElementById('key-visibility-icon');
             if (apiKeyInput.type === 'password') {
@@ -520,7 +553,6 @@
             lucide.createIcons();
         }
 
-        // คัดลอกผลผลิตไปใช้งานต่อ
         function handleCopy() {
             const outputText = tsxOutput.value;
             if (!outputText) return;
@@ -528,19 +560,303 @@
             navigator.clipboard.writeText(outputText).then(() => {
                 const copyText = document.getElementById('copy-text');
                 copyText.innerText = 'คัดลอกสำเร็จแล้ว!';
-                showToast('คัดลอกโค้ดคอมโพเนนต์ไปยังคลิปบอร์ดแล้ว', 'success');
-                setTimeout(() => {
-                    copyText.innerText = 'คัดลอกโค้ด';
-                }, 2000);
+                showToast('คัดลอกโค้ดไปยังคลิปบอร์ดแล้ว', 'success');
+                setTimeout(() => { copyText.innerText = 'คัดลอกโค้ด'; }, 2000);
             }).catch(err => {
-                showToast('ไม่สามารถคัดลอกโค้ดแบบอัตโนมัติได้', 'error');
+                showToast('ไม่สามารถคัดลอกอัตโนมัติได้', 'error');
             });
         }
 
-        // จัดการเชื่อมต่อประมวลผลแปลงโค้ดด้วย API ของ Gemini
+        // --- เริ่มต้นตรรกะ LOCAL COMPILER (ไม่ใช่ AI) ---
+        
+        // ฟังก์ชันดึงและแปลง CSS Declarations ไปเป็น Tailwind CSS Utility Classes
+        function mapCSSPropertyToTailwind(prop, value) {
+            const val = value.replace(/;$/, '').trim();
+            
+            // 1. Layout & Display
+            if (prop === 'display') {
+                if (val === 'flex') return 'flex';
+                if (val === 'grid') return 'grid';
+                if (val === 'block') return 'block';
+                if (val === 'inline-block') return 'inline-block';
+                if (val === 'none') return 'hidden';
+            }
+            if (prop === 'flex-wrap') return val === 'wrap' ? 'flex-wrap' : '';
+            if (prop === 'gap') return `gap-[${val}]`;
+            if (prop === 'justify-content') {
+                if (val === 'center') return 'justify-center';
+                if (val === 'space-between') return 'justify-between';
+                if (val === 'flex-start') return 'justify-start';
+                if (val === 'flex-end') return 'justify-end';
+            }
+            if (prop === 'align-items') {
+                if (val === 'center') return 'items-center';
+                if (val === 'flex-start') return 'items-start';
+                if (val === 'flex-end') return 'items-end';
+            }
+            
+            // 2. Positioning
+            if (prop === 'position') {
+                if (['relative', 'absolute', 'fixed', 'sticky'].includes(val)) return val;
+            }
+            if (prop === 'top') return `top-[${val}]`;
+            if (prop === 'bottom') return `bottom-[${val}]`;
+            if (prop === 'left') return `left-[${val}]`;
+            if (prop === 'right') return `right-[${val}]`;
+            if (prop === 'z-index') return `z-[${val}]`;
+
+            // 3. Sizing
+            if (prop === 'width') return val === '100%' ? 'w-full' : `w-[${val}]`;
+            if (prop === 'height') return val === '100%' ? 'h-full' : `h-[${val}]`;
+            if (prop === 'max-width') return `max-w-[${val}]`;
+            if (prop === 'max-height') return `max-h-[${val}]`;
+
+            // 4. Margins & Paddings
+            if (prop === 'margin') {
+                if (val === '0 auto' || val === 'auto') return 'mx-auto';
+                return `m-[${val}]`;
+            }
+            if (prop === 'margin-top') return `mt-[${val}]`;
+            if (prop === 'margin-bottom') return `mb-[${val}]`;
+            if (prop === 'margin-left') return `ml-[${val}]`;
+            if (prop === 'margin-right') return `mr-[${val}]`;
+
+            if (prop === 'padding') return `p-[${val}]`;
+            if (prop === 'padding-top') return `pt-[${val}]`;
+            if (prop === 'padding-bottom') return `pb-[${val}]`;
+            if (prop === 'padding-left') return `pl-[${val}]`;
+            if (prop === 'padding-right') return `pr-[${val}]`;
+
+            // 5. Borders & Shapes
+            if (prop === 'border-radius') return `rounded-[${val}]`;
+            if (prop === 'border') {
+                if (val === 'none') return 'border-none';
+                const parts = val.split(' ');
+                let classes = 'border';
+                const color = parts.find(p => p.startsWith('#') || p.startsWith('rgb') || p.startsWith('hsl'));
+                if (color) classes += ` border-[${color}]`;
+                return classes;
+            }
+            if (prop === 'box-shadow') return `shadow-[${val}]`;
+
+            // 6. Typography
+            if (prop === 'font-size') {
+                if (val === '1.25rem') return 'text-xl';
+                if (val === '1rem') return 'text-base';
+                if (val === '0.875rem') return 'text-sm';
+                if (val === '0.75rem') return 'text-xs';
+                return `text-[${val}]`;
+            }
+            if (prop === 'font-weight') {
+                if (val === 'bold' || val === '700') return 'font-bold';
+                if (val === '600') return 'font-semibold';
+                if (val === '500') return 'font-medium';
+                return `font-[${val}]`;
+            }
+            if (prop === 'color') {
+                if (val.startsWith('#') || val.startsWith('rgb') || val.startsWith('hsl')) return `text-[${val}]`;
+            }
+            if (prop === 'line-height') return `leading-[${val}]`;
+            if (prop === 'object-fit') return `object-${val}`;
+
+            // 7. Background & Miscellaneous
+            if (prop === 'background-color' || prop === 'background') {
+                if (val.startsWith('#') || val.startsWith('rgb') || val.startsWith('hsl')) return `bg-[${val}]`;
+            }
+            if (prop === 'transition') return 'transition';
+            if (prop === 'cursor') return `cursor-${val}`;
+            if (prop === 'transform') return `transform [transform:${val}]`;
+
+            // Fallback เพื่อรักษารูปแบบสไตล์เฉพาะตัว
+            return `[${prop}:${val.replace(/\s+/g, '_')}]`;
+        }
+
+        // ระบบ Parse เนื้อหา CSS
+        function parseCSSText(cssText) {
+            const rules = [];
+            cssText = cssText.replace(/\/\*[\s\S]*?\*\//g, ''); // กำจัด CSS Comment
+            const regex = /([^{]+)\{([^}]+)\}/g;
+            let match;
+            while ((match = regex.exec(cssText)) !== null) {
+                const selector = match[1].trim();
+                const declarationsRaw = match[2].trim();
+                const decls = {};
+                declarationsRaw.split(';').forEach(d => {
+                    const parts = d.split(':');
+                    if (parts.length >= 2) {
+                        const key = parts[0].trim();
+                        const val = parts.slice(1).join(':').trim();
+                        decls[key] = val;
+                    }
+                });
+                rules.push({ selector, decls });
+            }
+            return rules;
+        }
+
+        // เคลื่อนย้ายสไตล์เดิมเข้าสู่ชุดคลาส Tailwind บน HTML DOM
+        function processElements(element, cssRules) {
+            if (element.nodeType !== Node.ELEMENT_NODE) return;
+
+            let tailwindClasses = [];
+
+            // 1. ตรวจจับคลาสและประเภท Selector ในสไตล์แท็ก <style>
+            cssRules.forEach(rule => {
+                const selector = rule.selector;
+                const isHover = selector.includes(':hover');
+                const baseSelector = selector.replace(':hover', '').trim();
+
+                try {
+                    if (element.matches(baseSelector)) {
+                        Object.entries(rule.decls).forEach(([k, v]) => {
+                            const mappedClass = mapCSSPropertyToTailwind(k, v);
+                            if (mappedClass) {
+                                if (isHover) {
+                                    mappedClass.split(' ').forEach(c => {
+                                        if (c) tailwindClasses.push(`hover:${c}`);
+                                    });
+                                } else {
+                                    mappedClass.split(' ').forEach(c => {
+                                        if (c) tailwindClasses.push(c);
+                                    });
+                                }
+                            }
+                        });
+                    }
+                } catch (e) {
+                    // ป้องกันความผิดพลาดของ Selector ที่ไม่สอดคล้องกับ matches()
+                }
+            });
+
+            // 2. แกะและแปลง Inline Style Attribute (style="...")
+            if (element.hasAttribute('style')) {
+                const styleAttr = element.getAttribute('style');
+                styleAttr.split(';').forEach(decl => {
+                    const parts = decl.split(':');
+                    if (parts.length >= 2) {
+                        const k = parts[0].trim();
+                        const v = parts.slice(1).join(':').trim();
+                        const mappedClass = mapCSSPropertyToTailwind(k, v);
+                        if (mappedClass) {
+                            mappedClass.split(' ').forEach(c => {
+                                if (c) tailwindClasses.push(c);
+                            });
+                        }
+                    }
+                });
+                element.removeAttribute('style'); // ล้าง Style เดิมหลังนำมาแปลง
+            }
+
+            // เขียนคลาส Tailwind ลงสู่ Element
+            if (tailwindClasses.length > 0) {
+                const currentClass = element.getAttribute('class') || '';
+                // ล้างคลาสดั้งเดิมและนำคลาส Tailwind เข้าแทนที่
+                element.setAttribute('class', tailwindClasses.join(' '));
+            }
+
+            // ประมวลผลลูก (Child Nodes) ต่อเนื่อง
+            Array.from(element.childNodes).forEach(child => {
+                processElements(child, cssRules);
+            });
+        }
+
+        // แปลง DOM Element และโครงสร้างทั้งหมดกลายเป็น JSX Element String
+        function serializeToJSX(node, depth = 1) {
+            if (node.nodeType === Node.TEXT_NODE) {
+                const text = node.textContent.trim();
+                return text ? text.replace(/[{}]/g, m => `{'${m}'}`) : '';
+            }
+            if (node.nodeType === Node.COMMENT_NODE) {
+                return `{/* ${node.textContent.trim()} */}`;
+            }
+            if (node.nodeType !== Node.ELEMENT_NODE) return '';
+
+            const indent = '  '.repeat(depth);
+            const tagName = node.tagName.toLowerCase();
+            
+            let attrs = '';
+            Array.from(node.attributes).forEach(attr => {
+                let name = attr.name;
+                let value = attr.value;
+                if (name === 'class') {
+                    name = 'className';
+                } else if (name.startsWith('on')) {
+                    // แปลง event attributes (เช่น onclick เป็น onClick)
+                    name = 'on' + name.charAt(2).toUpperCase() + name.slice(3);
+                }
+                attrs += ` ${name}="${value}"`;
+            });
+
+            const selfClosingTags = ['img', 'input', 'br', 'hr', 'meta', 'link'];
+            const isSelfClosing = selfClosingTags.includes(tagName);
+
+            let childrenJSX = '';
+            Array.from(node.childNodes).forEach(child => {
+                const childResult = serializeToJSX(child, depth + 1);
+                if (childResult) {
+                    childrenJSX += `\n${indent}  ${childResult}`;
+                }
+            });
+
+            if (isSelfClosing) {
+                return `<${tagName}${attrs} />`;
+            } else {
+                if (childrenJSX) {
+                    return `<${tagName}${attrs}>${childrenJSX}\n${indent}</${tagName}>`;
+                } else {
+                    return `<${tagName}${attrs}></${tagName}>`;
+                }
+            }
+        }
+
+        // แกนรวบรวมการรันคำสั่ง Local Converter
+        function compileLocalTSX(htmlWithStyles, componentName) {
+            const parser = new DOMParser();
+            
+            // คัดแยกสไตล์แท็ก <style> ออกมา
+            let cssCollected = '';
+            const styleRegex = /<style[^>]*>([\s\S]*?)<\/style>/gi;
+            const htmlWithoutStyles = htmlWithStyles.replace(styleRegex, (match, css) => {
+                cssCollected += css + '\n';
+                return '';
+            });
+
+            const cssRules = parseCSSText(cssCollected);
+
+            // แปลงเป็น DOM Document ชั่วคราวเพื่อดำเนินการย้ายคลาส
+            const doc = parser.parseFromString(`<div>${htmlWithoutStyles}</div>`, 'text/html');
+            const rootWrapper = doc.body.firstChild;
+
+            // ตรวจสอบและย้ายสไตล์
+            processElements(rootWrapper, cssRules);
+
+            // ประกอบโครงสร้าง React Component
+            let innerJSX = '';
+            if (rootWrapper.childNodes.length === 1 && rootWrapper.firstChild.nodeType === Node.ELEMENT_NODE) {
+                innerJSX = serializeToJSX(rootWrapper.firstChild, 2);
+            } else {
+                let multipleChildren = '';
+                Array.from(rootWrapper.childNodes).forEach(child => {
+                    const res = serializeToJSX(child, 2);
+                    if (res) multipleChildren += `\n    ${res}`;
+                });
+                innerJSX = `<>${multipleChildren}\n  </>`;
+            }
+
+            return `import React from 'react';
+
+export default function ${componentName}() {
+  return (
+    ${innerJSX}
+  );
+}`;
+        }
+        // --- จบตรรกะ LOCAL COMPILER ---
+
+
+        // จัดการเชื่อมต่อประมวลผลแปลงโค้ด (เลือกระหว่าง Local หรือ AI)
         async function handleConvert() {
             const htmlValue = htmlInput.value.trim();
-            const apiKey = apiKeyInput.value.trim();
             const componentName = componentNameInput.value.trim() || 'MyComponent';
 
             if (!htmlValue) {
@@ -548,17 +864,7 @@
                 return;
             }
 
-            if (!apiKey) {
-                showToast('กรุณากรอก Gemini API Key เพื่อเชื่อมต่อระบบ AI', 'error');
-                errorBox.classList.remove('hidden');
-                errorMessage.innerText = 'ไม่พบ API Key - คุณสามารถรับคีย์ได้ฟรีจาก Google AI Studio และวางลงบนช่องด้านบนก่อนทำงาน';
-                return;
-            }
-
-            // บันทึกเก็บ API key ไว้สำหรับใช้งานครั้งต่อไปในความสะดวกของผู้ใช้
-            localStorage.setItem('gemini_api_key', apiKey);
-
-            // ปิดและแสดงสถานะต่าง ๆ ในบอร์ดผลผลิต
+            // ปรับแต่งการแสดงผล UI ตอนเริ่มรันงาน
             loadingState.classList.remove('hidden');
             emptyState.classList.add('hidden');
             errorBox.classList.add('hidden');
@@ -566,98 +872,127 @@
             btnCopy.classList.add('hidden');
             outputCharCount.innerText = 'ความยาว: 0 ตัวอักษร';
 
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+            if (activeEngineMode === 'local') {
+                // 1. ประมวลผลด้วยเครื่องยนต์ท้องถิ่น (ไม่พึ่งเน็ต)
+                loadingTitle.innerText = 'เครื่องยนต์กำลังประมวลผลด่วน';
+                loadingDesc.innerText = 'แยกโครงสร้าง CSS ดั้งเดิม ย้ายคลาส และสร้างสถาปัตยกรรม JSX ด่วน';
+                
+                // รอระบบแอนิเมชันวาดรูปเล็กน้อยให้สมจริง
+                await new Promise(resolve => setTimeout(resolve, 350));
 
-            const systemInstruction = "You are an expert AI Frontend Engineer specialized in React, TypeScript, and Tailwind CSS conversions. Your output should contain nothing but the raw TSX component code.";
-            
-            const prompt = `
-            นี่คือโค้ด HTML ของฉัน ซึ่งอาจมีแท็กสไตล์ <style> ดั้งเดิม หรือสไตล์แบบ inline (style="") ร่วมอยู่ด้วย:
-            
-            ${htmlValue}
-            
-            กรุณาช่วยแปลงโค้ดนี้ให้กลายเป็นคอมโพเนนต์ React TypeScript (TSX) ที่สวยงามและมีโครงสร้างที่ดี
-            - ตั้งชื่อคอมโพเนนต์หลักว่า: "${componentName}"
-            - แปลงสไตล์ทั้งหมด (ทั้งจากแท็ก <style> และสไตล์ inline) ไปเป็น Tailwind CSS classes ที่เหมาะสมที่สุด
-            - ห้ามนำเข้าไฟล์ .css ภายนอกหรือเก็บ <style> เดิมไว้ในผลลัพธ์คอมโพเนนต์
-            - ใช้ประเภท TypeScript (TypeScript types/interfaces) ที่ถูกต้อง หากจำเป็นต้องจัดการสเตตหรือ Events
-            - ตรวจสอบให้แน่ใจว่าแท็กที่เปิดทั้งหมดถูกปิดอย่างถูกต้องในรูปแบบ TSX (เช่น <img />)
-            - เปลี่ยนแอ็ตทริบิวต์ให้อยู่ในมาตรฐาน React (เช่น 'class' เป็น 'className', 'onclick' เป็น 'onClick', สไตล์แบบ inline เป็น React style object)
-            - ส่งกลับมาเฉพาะส่วนที่เป็น "โค้ด TSX ดิบ" เท่านั้น โดยไม่ต้องมีเครื่องหมายแบ็กทิกหรือเขียนเกริ่นนำอธิบายใดๆ ทั้งสิ้น
-            - เพิ่มคำอธิบายโค้ด (Comments) ภาษาไทยสั้น ๆ ในส่วนสำคัญเพื่อให้ฉันเข้าใจโครงสร้างที่คุณจัดวางไว้
-            `;
-
-            const requestBody = {
-                contents: [{
-                    parts: [{ text: prompt }]
-                }],
-                systemInstruction: {
-                    parts: [{ text: systemInstruction }]
-                }
-            };
-
-            const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-            let success = false;
-            let resultText = '';
-            let lastError = '';
-
-            // ทำงานแบบทวีคูณในการลองใหม่เมื่อติดต่อ API ล้มเหลว (Exponential Backoff)
-            for (let attempt = 0; attempt < 3; attempt++) {
                 try {
-                    const response = await fetch(url, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(requestBody)
-                    });
-
-                    if (!response.ok) {
-                        const errData = await response.json().catch(() => ({}));
-                        const remoteMessage = errData.error?.message || `รหัสสถานะ: ${response.status}`;
-                        throw new Error(remoteMessage);
-                    }
-
-                    const responseData = await response.json();
-                    let rawText = responseData.candidates?.[0]?.content?.parts?.[0]?.text;
-
-                    if (rawText) {
-                        // กำจัด Markdown Wrapper ส่วนที่เหลือออกหากโมเดลแอบพ่นติดเข้ามา
-                        let clean = rawText.trim();
-                        if (clean.startsWith('```tsx')) clean = clean.substring(6);
-                        else if (clean.startsWith('```typescript')) clean = clean.substring(13);
-                        else if (clean.startsWith('```jsx')) clean = clean.substring(6);
-                        else if (clean.startsWith('```javascript')) clean = clean.substring(13);
-                        else if (clean.startsWith('```')) clean = clean.substring(3);
-
-                        if (clean.endsWith('```')) clean = clean.substring(0, clean.length - 3);
-
-                        resultText = clean.trim();
-                        success = true;
-                        break;
-                    } else {
-                        throw new Error('โครงสร้างการตอบรับจากเซิร์ฟเวอร์ AI ไม่สอดคล้องกับพฤติกรรมดึงเนื้อหา');
-                    }
+                    const resultText = compileLocalTSX(htmlValue, componentName);
+                    tsxOutput.value = resultText;
+                    outputCharCount.innerText = `ความยาว: ${resultText.length} ตัวอักษร`;
+                    btnCopy.classList.remove('hidden');
+                    showToast('แปลงโค้ดเสร็จสมบูรณ์ (Local Mode)!', 'success');
                 } catch (err) {
-                    lastError = err.message || 'ตรวจพบลักษณะสัญญาณเชื่อมต่อขัดข้อง';
-                    if (attempt < 2) {
-                        const waitTime = Math.pow(2, attempt) * 1000;
-                        await delay(waitTime);
+                    errorBox.classList.remove('hidden');
+                    errorMessage.innerText = `การประมวลผลแบบด่วนเกิดข้อผิดพลาด: ${err.message}`;
+                    showToast('แปลงรหัสล้มเหลว', 'error');
+                } finally {
+                    loadingState.classList.add('hidden');
+                }
+
+            } else {
+                // 2. ประมวลผลด้วย AI Gemini Mode
+                const apiKey = apiKeyInput.value.trim();
+                if (!apiKey) {
+                    loadingState.classList.add('hidden');
+                    showToast('กรุณากรอก Gemini API Key ก่อนใช้งานโหมด AI', 'error');
+                    errorBox.classList.remove('hidden');
+                    errorMessage.innerText = 'ไม่พบ API Key - คุณสามารถสลับเป็น "เครื่องยนต์ท้องถิ่น" หรือขอสร้างคีย์ใหม่ได้ฟรีจาก Google AI Studio และนำมาใส่ด้านบนเพื่อทำงานต่อ';
+                    return;
+                }
+
+                localStorage.setItem('gemini_api_key', apiKey);
+                loadingTitle.innerText = 'AI กำลังทำงานอย่างแข็งขัน';
+                loadingDesc.innerText = 'แปลงสไตล์ CSS และแยกส่วนประกอบย่อยให้เหมาะกับมาตรฐาน JSX ด้วยขุมพลัง Gemini';
+
+                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+                const systemInstruction = "You are an expert AI Frontend Engineer specialized in React, TypeScript, and Tailwind CSS conversions. Your output should contain nothing but the raw TSX component code.";
+                
+                const prompt = `
+                นี่คือโค้ด HTML ของฉัน ซึ่งอาจมีแท็กสไตล์ <style> ดั้งเดิม หรือสไตล์แบบ inline (style="") ร่วมอยู่ด้วย:
+                
+                ${htmlValue}
+                
+                กรุณาช่วยแปลงโค้ดนี้ให้กลายเป็นคอมโพเนนต์ React TypeScript (TSX) ที่สวยงามและมีโครงสร้างที่ดี
+                - ตั้งชื่อคอมโพเนนต์หลักว่า: "${componentName}"
+                - แปลงสไตล์ทั้งหมด (ทั้งจากแท็ก <style> และสไตล์ inline) ไปเป็น Tailwind CSS classes ที่เหมาะสมที่สุด
+                - ห้ามนำเข้าไฟล์ .css ภายนอกหรือเก็บ <style> เดิมไว้ในผลลัพธ์คอมโพเนนต์
+                - ใช้ประเภท TypeScript (TypeScript types/interfaces) ที่ถูกต้อง หากจำเป็นต้องจัดการสเตตหรือ Events
+                - ตรวจสอบให้แน่ใจว่าแท็กที่เปิดทั้งหมดถูกปิดอย่างถูกต้องในรูปแบบ TSX (เช่น <img />)
+                - เปลี่ยนแอ็ตทริบิวต์ให้อยู่ในมาตรฐาน React (เช่น 'class' เป็น 'className', 'onclick' เป็น 'onClick', สไตล์แบบ inline เป็น React style object)
+                - ส่งกลับมาเฉพาะส่วนที่เป็น "โค้ด TSX ดิบ" เท่านั้น โดยไม่ต้องมีเครื่องหมายแบ็กทิกหรือเขียนเกริ่นนำอธิบายใดๆ ทั้งสิ้น
+                - เพิ่มคำอธิบายโค้ด (Comments) ภาษาไทยสั้น ๆ ในส่วนสำคัญเพื่อให้ฉันเข้าใจโครงสร้างที่คุณจัดวางไว้
+                `;
+
+                const requestBody = {
+                    contents: [{ parts: [{ text: prompt }] }],
+                    systemInstruction: { parts: [{ text: systemInstruction }] }
+                };
+
+                const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+                let success = false;
+                let resultText = '';
+                let lastError = '';
+
+                // Exponential Backoff ลองรันใหม่ 3 ครั้งหากเจอเหตุขัดข้อง
+                for (let attempt = 0; attempt < 3; attempt++) {
+                    try {
+                        const response = await fetch(url, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(requestBody)
+                        });
+
+                        if (!response.ok) {
+                            const errData = await response.json().catch(() => ({}));
+                            const remoteMessage = errData.error?.message || `รหัสสถานะ: ${response.status}`;
+                            throw new Error(remoteMessage);
+                        }
+
+                        const responseData = await response.json();
+                        let rawText = responseData.candidates?.[0]?.content?.parts?.[0]?.text;
+
+                        if (rawText) {
+                            let clean = rawText.trim();
+                            if (clean.startsWith('```tsx')) clean = clean.substring(6);
+                            else if (clean.startsWith('```typescript')) clean = clean.substring(13);
+                            else if (clean.startsWith('```jsx')) clean = clean.substring(6);
+                            else if (clean.startsWith('```javascript')) clean = clean.substring(13);
+                            else if (clean.startsWith('```')) clean = clean.substring(3);
+
+                            if (clean.endsWith('```')) clean = clean.substring(0, clean.length - 3);
+
+                            resultText = clean.trim();
+                            success = true;
+                            break;
+                        } else {
+                            throw new Error('โครงสร้างการตอบรับจากเซิร์ฟเวอร์ AI ไม่ถูกต้อง');
+                        }
+                    } catch (err) {
+                        lastError = err.message || 'ตรวจพบลักษณะสัญญาณเชื่อมต่อขัดข้อง';
+                        if (attempt < 2) {
+                            const waitTime = Math.pow(2, attempt) * 1000;
+                            await delay(waitTime);
+                        }
                     }
                 }
-            }
 
-            // จบขั้นตอนแล้วเอาสถานะ Loading ออก
-            loadingState.classList.add('hidden');
+                loadingState.classList.add('hidden');
 
-            if (success) {
-                tsxOutput.value = resultText;
-                outputCharCount.innerText = `ความยาว: ${resultText.length} ตัวอักษร`;
-                btnCopy.classList.remove('hidden');
-                showToast('แปลงโค้ดเสร็จสมบูรณ์!', 'success');
-            } else {
-                errorBox.classList.remove('hidden');
-                errorMessage.innerText = `${lastError} (หากคุณใส่ Key ผิด กรุณาตรวจสอบหรือขอสร้างอันใหม่ผ่าน Google AI Studio)`;
-                showToast('กระบวนการแปลงรหัสล้มเหลว', 'error');
+                if (success) {
+                    tsxOutput.value = resultText;
+                    outputCharCount.innerText = `ความยาว: ${resultText.length} ตัวอักษร`;
+                    btnCopy.classList.remove('hidden');
+                    showToast('แปลงโค้ดเสร็จสมบูรณ์ (AI Mode)!', 'success');
+                } else {
+                    errorBox.classList.remove('hidden');
+                    errorMessage.innerText = `${lastError} (หากคุณระบุ Key ไม่ถูกต้อง กรุณาลองตรวจสอบอีกครั้ง)`;
+                    showToast('กระบวนการแปลงรหัสล้มเหลว', 'error');
+                }
             }
         }
     </script>
